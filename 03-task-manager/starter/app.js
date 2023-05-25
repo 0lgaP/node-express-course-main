@@ -5,6 +5,8 @@ const tasks = require("./routes/tasks");
 // require('./db/connect')
 const connectDB = require("./db/connect");
 require("dotenv").config();
+const notFound = require("./middlewere/notfound")
+
 
 //middleware
 app.use(express.static('./public'))
@@ -12,6 +14,8 @@ app.use(express.json());
 
 //routes
 app.use("/api/v1/tasks", tasks);
+  // below is the responce for a 404
+app.use(notFound)
 
 const port = 3000;
 

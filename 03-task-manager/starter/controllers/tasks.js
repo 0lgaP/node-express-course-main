@@ -4,6 +4,9 @@ const getAllTasks = async (req, res) => {
   try {
     const tasks = await Task.find({});
     res.status(200).json({ tasks });
+    // in this project axios is returning data, nesting data within data is confusing. Keep the res consistant.
+    // res.status(200).json({ tasks, amount: tasks.length });
+    // res.status(200).json({ success:true, data: {tasks, nbHits: tasks.length} });
   } catch (error) {
     res.status(500).json({ msg: error });
   }
@@ -55,20 +58,41 @@ const updateTask = async (req, res) => {
       new: true,
       runValidators: true,
     });
-    if (!taskID) {
+    if (!task) {
       return res
         .status(404)
-        .json({ msg: "could not find the task, cannot detele" });
+        .json({ msg: "could not find the task, cannot update" });
     }
     res.status(200).json({ task });
   } catch (error) {
     res.status(500).json({ msg: error });
   }
 };
+
+const editTask = async (req, res) => {
+  try {
+    const { id: taskID } = req.params;
+    const task = await Task.findOneAndUpdate({ _id: taskID }, req.body, {
+      new: true,
+      runValidators: true,
+      overwrite: true
+    });
+    if (!task) {
+      return res
+        .status(404)
+        .json({ msg: "could not find the task, cannot edit" });
+    }
+    res.status(200).json({ task });
+  } catch (error) {
+    res.status(500).json({ msg: error });
+  }
+};
+
 module.exports = {
   getAllTasks,
   getTask,
   createTask,
   updateTask,
   deleteTask,
+  editTask
 };
